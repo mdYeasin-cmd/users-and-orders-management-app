@@ -120,8 +120,6 @@ userSchema.pre("save", async function (next) {
 
     next();
   } catch (error) {
-    // Handle any errors that might occur during hashing
-    // next(error);
     console.log(error);
   }
 });

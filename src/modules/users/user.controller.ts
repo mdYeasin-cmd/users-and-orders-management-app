@@ -17,7 +17,7 @@ const createUser = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: "User creation process failed!",
+      message: error.message || "User creation process failed!",
       error: {
         code: 500,
         description: error.message || "User creation process failed!",
@@ -30,7 +30,7 @@ const getAllUser = async (req: Request, res: Response) => {
   try {
     const result = await UserServices.getAllUserFromDB();
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       message: "All user retrieved successfully!",
       data: result,
@@ -38,7 +38,7 @@ const getAllUser = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: "Users fetching process is failed!",
+      message: error.message || "Users fetching process is failed!",
       error: {
         code: 500,
         description: error.message || "Users fetching process is failed!",
@@ -61,7 +61,7 @@ const getAUserByUserId = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: "User fetching process is failed!",
+      message: error.message || "User fetching process is failed!",
       error: {
         code: 500,
         description: error.message || "User fetching process is failed!",

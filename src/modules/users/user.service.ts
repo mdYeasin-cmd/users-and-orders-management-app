@@ -13,22 +13,36 @@ const getAllUserFromDB = async () => {
     age: 1,
     email: 1,
     address: 1,
+    _id: 0,
   });
+
   return result;
 };
 
 const getAUserByUserIdFromDB = async (userId: number) => {
-  const result = await User.findOne({ userId }).select({ password: 0 });
-  return result;
+  if (await User.isUserExists(userId)) {
+    const result = await User.findOne({ userId }).select({
+      password: 0,
+      orders: 0,
+      _id: 0,
+    });
+
+    return result;
+  } else {
+    throw new Error("Couldn't get any user using the user id");
+  }
 };
 
 const updateAUserByUserIdFromDB = async (userId: number, userData: TUser) => {
   if (await User.isUserExists(userId)) {
-    const result = await User.updateOne({ userId }, userData);
+    const result = await User.updateOne({ userId }, { $set: userData });
     if (result.modifiedCount > 0) {
       const updatedUserResult = await User.findOne({ userId }).select({
         password: 0,
+        orders: 0,
+        _id: 0,
       });
+
       return updatedUserResult;
     } else {
       throw new Error("This information already exists in user profile");
