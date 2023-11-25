@@ -1,4 +1,4 @@
-export type TUserName = {
+export type TFullName = {
   firstName: string;
   lastName: string;
 };
@@ -19,11 +19,11 @@ export type TUser = {
   userId: number;
   username: string;
   password: string;
-  fullName: TUserName;
+  fullName: TFullName;
   age: number;
   email: string;
   isActive: boolean;
   hobbies: Array<string>;
   address: TAddress;
-  orders?: TOrders;
+  orders?: Array<TOrders>;
 };

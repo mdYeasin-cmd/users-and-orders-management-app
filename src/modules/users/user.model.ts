@@ -1,80 +1,94 @@
-import { Schema } from "mongoose";
+import { Schema, Document } from "mongoose";
 import bcrypt from "bcrypt";
 import config from "../../app/config";
+import { TAddress, TFullName, TOrders, TUser } from "./user.interface";
 
-const userSchema = new Schema({
+const fullNameSchema = new Schema<TFullName>({
+  firstName: {
+    type: String,
+    required: [true, "First name is required."],
+    maxlength: [25, "First name can't be more than 25 characters."],
+  },
+  lastName: {
+    type: String,
+    required: [true, "Last name is required."],
+    maxlength: [25, "Last name can't be more than 25 characters."],
+  },
+});
+
+const addressSchema = new Schema<TAddress>({
+  street: {
+    type: String,
+    required: [true, "Street name is required."],
+  },
+  city: {
+    type: String,
+    required: [true, "City name is required."],
+  },
+  country: {
+    type: String,
+    required: [true, "Country name is required."],
+  },
+});
+
+const ordersSchema = new Schema<TOrders>({
+  productName: {
+    type: String,
+    required: [true, "Product name is required."],
+  },
+  price: {
+    type: Number,
+    required: [true, "Price is required."],
+  },
+  quantity: {
+    type: Number,
+    required: [true, "Quantity is required."],
+  },
+});
+
+const userSchema = new Schema<TUser>({
   userId: {
     type: Number,
-    required: true,
+    required: [true, "User ID is required."],
     unique: true,
   },
   username: {
     type: String,
-    required: true,
+    required: [true, "Username is required."],
     unique: true,
   },
   password: {
     type: String,
-    required: true,
+    required: [true, "Password is required."],
+    maxlength: [32, "Password length can't be more than 25 characters."],
+    minlength: [6, "Password length must be at least 6 characters."],
   },
   fullName: {
-    firstName: {
-      type: String,
-      required: true,
-    },
-    lastName: {
-      type: String,
-      required: true,
-    },
+    type: fullNameSchema,
+    required: [true, "Full name is required."],
   },
   age: {
     type: Number,
-    required: true,
+    required: [true, "Age is required."],
   },
   email: {
     type: String,
-    required: true,
+    required: [true, "Email is required."],
   },
   isActive: {
     type: Boolean,
-    required: true,
+    default: true,
   },
   hobbies: {
     type: [String],
-    default: [],
+    required: [true, "Hobbies are required."],
   },
   address: {
-    street: {
-      type: String,
-      required: true,
-    },
-    city: {
-      type: String,
-      required: true,
-    },
-    country: {
-      type: String,
-      required: true,
-    },
+    type: addressSchema,
+    required: [true, "Address is required."],
   },
   orders: {
-    type: [
-      {
-        productName: {
-          type: String,
-          required: true,
-        },
-        price: {
-          type: Number,
-          required: true,
-        },
-        quantity: {
-          type: Number,
-          required: true,
-        },
-      },
-    ],
-    default: [],
+    type: [ordersSchema],
   },
 });
 
