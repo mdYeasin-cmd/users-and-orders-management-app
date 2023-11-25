@@ -97,9 +97,32 @@ const updateAUserByUserId = async (req: Request, res: Response) => {
   }
 };
 
+const deleteAUserByUserId = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    await UserServices.deleteAUserByUserIdFromDB(Number(userId));
+
+    res.status(201).json({
+      success: true,
+      message: "User is deleted successfully!",
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || "User deleting process is failed!",
+      error: {
+        code: 500,
+        description: error.message || "User deleting process is failed!",
+      },
+    });
+  }
+};
+
 export const UserControllers = {
   createUser,
   getAllUser,
   getAUserByUserId,
   updateAUserByUserId,
+  deleteAUserByUserId,
 };
