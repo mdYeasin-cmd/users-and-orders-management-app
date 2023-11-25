@@ -5,11 +5,7 @@ const createUser = async (req: Request, res: Response) => {
   try {
     const { user: userData } = req.body;
 
-    console.log(userData);
-
     const result = await UserServices.createUserIntoDB(userData);
-
-    console.log(result, "controller");
 
     const { password, orders, ...resultWithoutPassword } = result.toObject();
 
@@ -30,6 +26,52 @@ const createUser = async (req: Request, res: Response) => {
   }
 };
 
+const getAllUser = async (req: Request, res: Response) => {
+  try {
+    const result = await UserServices.getAllUserFromDB();
+
+    res.status(201).json({
+      success: true,
+      message: "All user retrieved successfully!",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: "Users fetching process is failed!",
+      error: {
+        code: 500,
+        description: error.message || "Users fetching process is failed!",
+      },
+    });
+  }
+};
+
+const getAUserByUserId = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    const result = await UserServices.getAUserByUserIdFromDB(Number(userId));
+
+    res.status(201).json({
+      success: true,
+      message: "User is retrieved successfully!",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: "User fetching process is failed!",
+      error: {
+        code: 500,
+        description: error.message || "User fetching process is failed!",
+      },
+    });
+  }
+};
+
 export const UserControllers = {
   createUser,
+  getAllUser,
+  getAUserByUserId,
 };
