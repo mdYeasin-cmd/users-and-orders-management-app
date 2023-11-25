@@ -22,8 +22,25 @@ const getAUserByUserIdFromDB = async (userId: number) => {
   return result;
 };
 
+const updateAUserByUserIdFromDB = async (userId: number, userData: TUser) => {
+  if (await User.isUserExists(userId)) {
+    const result = await User.updateOne({ userId }, userData);
+    if (result.modifiedCount > 0) {
+      const updatedUserResult = await User.findOne({ userId }).select({
+        password: 0,
+      });
+      return updatedUserResult;
+    } else {
+      throw new Error("This information already exists in user profile");
+    }
+  } else {
+    throw new Error("Couldn't get any user using the user id");
+  }
+};
+
 export const UserServices = {
   createUserIntoDB,
   getAllUserFromDB,
   getAUserByUserIdFromDB,
+  updateAUserByUserIdFromDB,
 };

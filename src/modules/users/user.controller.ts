@@ -70,8 +70,36 @@ const getAUserByUserId = async (req: Request, res: Response) => {
   }
 };
 
+const updateAUserByUserId = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const { user: userData } = req.body;
+
+    const result = await UserServices.updateAUserByUserIdFromDB(
+      Number(userId),
+      userData
+    );
+
+    res.status(201).json({
+      success: true,
+      message: "User is updated successfully!",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || "User updating process is failed!",
+      error: {
+        code: 500,
+        description: error.message || "User updating process is failed!",
+      },
+    });
+  }
+};
+
 export const UserControllers = {
   createUser,
   getAllUser,
   getAUserByUserId,
+  updateAUserByUserId,
 };
