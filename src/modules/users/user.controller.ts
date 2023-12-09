@@ -31,9 +31,17 @@ const getAllUsers = async (req: Request, res: Response) => {
   try {
     const result = await UserServices.getAllUsersFromDB();
 
+    let message;
+
+    if (result.length > 0) {
+      message = "Users fetched successfully!";
+    } else {
+      message = "Couldn't find any user in database!";
+    }
+
     res.status(200).json({
       success: true,
-      message: "Users fetched successfully!",
+      message: message,
       data: result,
     });
   } catch (error: any) {
