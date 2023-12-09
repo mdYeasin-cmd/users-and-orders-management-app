@@ -1,14 +1,11 @@
 import { Request, Response } from "express";
 import { UserServices } from "./user.service";
-// import userValidationSchema from "./user.validation";
 
 const createUser = async (req: Request, res: Response) => {
   try {
-    // const { user: userData } = req.body;
+    const userData = req.body;
 
-    const zodparsedUserData = req.body; // userValidationSchema.parse(userData);
-
-    const result = await UserServices.createUserIntoDB(zodparsedUserData);
+    const result = await UserServices.createUserIntoDB(userData);
 
     const { _id, password, orders, ...resultWithoutPassword } =
       result.toObject();
@@ -30,13 +27,13 @@ const createUser = async (req: Request, res: Response) => {
   }
 };
 
-const getAllUser = async (req: Request, res: Response) => {
+const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const result = await UserServices.getAllUserFromDB();
+    const result = await UserServices.getAllUsersFromDB();
 
     res.status(200).json({
       success: true,
-      message: "All user retrieved successfully!",
+      message: "Users fetched successfully!",
       data: result,
     });
   } catch (error: any) {
@@ -59,7 +56,7 @@ const getAUserByUserId = async (req: Request, res: Response) => {
 
     res.status(201).json({
       success: true,
-      message: "User is retrieved successfully!",
+      message: "User fetched successfully!",
       data: result,
     });
   } catch (error: any) {
@@ -77,9 +74,9 @@ const getAUserByUserId = async (req: Request, res: Response) => {
 const updateAUserByUserId = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const { user: userData } = req.body;
+    const userData = req.body;
 
-    const result = await UserServices.updateAUserByUserIdFromDB(
+    const result = await UserServices.updateAUserByUserIdIntoDB(
       Number(userId),
       userData
     );
@@ -107,9 +104,10 @@ const deleteAUserByUserId = async (req: Request, res: Response) => {
 
     await UserServices.deleteAUserByUserIdFromDB(Number(userId));
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       message: "User is deleted successfully!",
+      data: null,
     });
   } catch (error: any) {
     res.status(500).json({
@@ -125,7 +123,7 @@ const deleteAUserByUserId = async (req: Request, res: Response) => {
 
 export const UserControllers = {
   createUser,
-  getAllUser,
+  getAllUsers,
   getAUserByUserId,
   updateAUserByUserId,
   deleteAUserByUserId,

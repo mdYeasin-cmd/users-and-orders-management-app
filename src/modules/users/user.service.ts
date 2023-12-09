@@ -6,7 +6,7 @@ const createUserIntoDB = async (userData: TUser) => {
   return result;
 };
 
-const getAllUserFromDB = async () => {
+const getAllUsersFromDB = async () => {
   const result = await User.find().select({
     username: 1,
     fullName: 1,
@@ -29,26 +29,19 @@ const getAUserByUserIdFromDB = async (userId: number) => {
 
     return result;
   } else {
-    throw new Error("Couldn't get any user using the user id");
+    throw new Error("Couldn't get any user using the user id!");
   }
 };
 
-const updateAUserByUserIdFromDB = async (userId: number, userData: TUser) => {
+const updateAUserByUserIdIntoDB = async (userId: number, userData: TUser) => {
   if (await User.isUserExists(userId)) {
-    const result = await User.updateOne({ userId }, { $set: userData });
-    if (result.modifiedCount > 0) {
-      const updatedUserResult = await User.findOne({ userId }).select({
-        password: 0,
-        orders: 0,
-        _id: 0,
-      });
+    const result = await User.findOneAndUpdate({ userId }, userData, {
+      new: true,
+    }).select({ password: 0, orders: 0, _id: 0 });
 
-      return updatedUserResult;
-    } else {
-      throw new Error("This information already exists in user profile");
-    }
+    return result;
   } else {
-    throw new Error("Couldn't get any user using the user id");
+    throw new Error("Couldn't get any user using the user id!");
   }
 };
 
@@ -57,14 +50,14 @@ const deleteAUserByUserIdFromDB = async (userId: number) => {
     const result = await User.deleteOne({ userId });
     return result;
   } else {
-    throw new Error("Couldn't get any user using the user id");
+    throw new Error("Couldn't get any user using the user id!");
   }
 };
 
 export const UserServices = {
   createUserIntoDB,
-  getAllUserFromDB,
+  getAllUsersFromDB,
   getAUserByUserIdFromDB,
-  updateAUserByUserIdFromDB,
+  updateAUserByUserIdIntoDB,
   deleteAUserByUserIdFromDB,
 };
