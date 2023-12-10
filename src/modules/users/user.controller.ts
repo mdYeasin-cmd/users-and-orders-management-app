@@ -2,12 +2,40 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from "express";
 import { UserServices } from "./user.service";
+import { UserValidations } from "./user.validation";
 
 const createUser = async (req: Request, res: Response) => {
     try {
         const userData = req.body;
 
-        const result = await UserServices.createUserIntoDB(userData);
+        const { error, value } =
+            UserValidations.createUserValidationSchema.validate(userData, {
+                abortEarly: false,
+                errors: {
+                    wrap: {
+                        label: "",
+                    },
+                },
+            });
+
+        if (error) {
+            const errorList = error.details.map((singleErr) => {
+                return singleErr.message;
+            });
+
+            const allErrors = errorList.join(", ");
+
+            return res.status(400).json({
+                success: false,
+                message: allErrors || "User creation process failed!",
+                error: {
+                    code: 400,
+                    description: allErrors || "User creation process failed!",
+                },
+            });
+        }
+
+        const result = await UserServices.createUserIntoDB(value);
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { _id, password, orders, ...resultWithoutPassword } =
@@ -91,9 +119,37 @@ const updateAUserByUserId = async (req: Request, res: Response) => {
         const { userId } = req.params;
         const userData = req.body;
 
+        const { error, value } =
+            UserValidations.updateUserValidationSchema.validate(userData, {
+                abortEarly: false,
+                errors: {
+                    wrap: {
+                        label: "",
+                    },
+                },
+            });
+
+        if (error) {
+            const errorList = error.details.map((singleErr) => {
+                return singleErr.message;
+            });
+
+            const allErrors = errorList.join(", ");
+
+            return res.status(400).json({
+                success: false,
+                message: allErrors || "User updating process is failed!",
+                error: {
+                    code: 400,
+                    description:
+                        allErrors || "User updating process is failed!",
+                },
+            });
+        }
+
         const result = await UserServices.updateAUserByUserIdIntoDB(
             Number(userId),
-            userData,
+            value,
         );
 
         res.status(201).json({
@@ -141,9 +197,37 @@ const deleteAUserByUserId = async (req: Request, res: Response) => {
 const addAOrderByUserId = async (req: Request, res: Response) => {
     try {
         const { userId } = req.params;
-        const OrderData = req.body;
+        const orderData = req.body;
 
-        await UserServices.addAOrderByUserIdIntoDB(Number(userId), OrderData);
+        const { error, value } =
+            UserValidations.createOrdersValidationSchema.validate(orderData, {
+                abortEarly: false,
+                errors: {
+                    wrap: {
+                        label: "",
+                    },
+                },
+            });
+
+        if (error) {
+            const errorList = error.details.map((singleErr) => {
+                return singleErr.message;
+            });
+
+            const allErrors = errorList.join(", ");
+
+            return res.status(400).json({
+                success: false,
+                message: allErrors || "Order creation process is failed!",
+                error: {
+                    code: 400,
+                    description:
+                        allErrors || "Order creation process is failed!",
+                },
+            });
+        }
+
+        await UserServices.addAOrderByUserIdIntoDB(Number(userId), value);
 
         res.status(200).json({
             success: true,

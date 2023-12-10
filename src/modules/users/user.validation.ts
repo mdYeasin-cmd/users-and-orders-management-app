@@ -1,44 +1,59 @@
-// import { z } from "zod";
+import Joi from "joi";
 
-// const fullNameValidationSchema = z.object({
-//   firstName: z
-//     .string()
-//     .min(1)
-//     .max(25, { message: "First name must be between 1 and 25 characters." }),
-//   lastName: z
-//     .string()
-//     .min(1)
-//     .max(25, { message: "Last name must be between 1 and 25 characters." }),
-// });
+const createFullNameValidationSchema = Joi.object({
+    firstName: Joi.string().required().max(25),
+    lastName: Joi.string().required().max(25),
+});
 
-// const addressValidationSchema = z.object({
-//   street: z.string().min(1, { message: "Street name is required." }),
-//   city: z.string().min(1, { message: "City name is required." }),
-//   country: z.string().min(1, { message: "Country name is required." }),
-// });
+const createAddressValidationSchema = Joi.object({
+    street: Joi.string().required(),
+    city: Joi.string().required(),
+    country: Joi.string().required(),
+});
 
-// const ordersValidationSchema = z.object({
-//   productName: z.string().min(1, { message: "Product name is required." }),
-//   price: z.number({ message: "Price is required." }),
-//   quantity: z.number({ message: "Quantity is required." }),
-// });
+const createUserValidationSchema = Joi.object({
+    userId: Joi.number().required(),
+    username: Joi.string().required(),
+    password: Joi.string().required().max(32).min(6),
+    fullName: createFullNameValidationSchema.required(),
+    age: Joi.number().required(),
+    email: Joi.string().required(),
+    isActive: Joi.boolean().default(true),
+    hobbies: Joi.array().items(Joi.string()).required(),
+    address: createAddressValidationSchema.required(),
+});
 
-// const userValidationSchema = z.object({
-//   userId: z.number({ message: "User ID is required." }),
-//   username: z.string().min(1, { message: "Username is required." }),
-//   password: z
-//     .string()
-//     .min(6, { message: "Password must be at least 6 characters." })
-//     .max(32, { message: "Password can't be more than 32 characters." }),
-//   fullName: fullNameValidationSchema,
-//   age: z.number({ message: "Age is required." }),
-//   email: z.string().email({ message: "Invalid email format." }),
-//   isActive: z.boolean({ message: "isActive must be a boolean." }),
-//   hobbies: z.array(
-//     z.string().min(1, { message: "At least one hobby is required." })
-//   ),
-//   address: addressValidationSchema,
-//   orders: z.array(ordersValidationSchema).optional(),
-// });
+const createOrdersValidationSchema = Joi.object({
+    productName: Joi.string().required(),
+    price: Joi.number().required(),
+    quantity: Joi.number().required(),
+});
 
-// export default userValidationSchema;
+const updateFullNameValidationSchema = Joi.object({
+    firstName: Joi.string().max(25).optional(),
+    lastName: Joi.string().max(25).optional(),
+});
+
+const updateAddressValidationSchema = Joi.object({
+    street: Joi.string().optional(),
+    city: Joi.string().optional(),
+    country: Joi.string().optional(),
+});
+
+const updateUserValidationSchema = Joi.object({
+    userId: Joi.number().optional(),
+    username: Joi.string().optional(),
+    password: Joi.string().max(32).min(6).optional(),
+    fullName: updateFullNameValidationSchema.optional(),
+    age: Joi.number().optional(),
+    email: Joi.string().optional(),
+    isActive: Joi.boolean().optional(),
+    hobbies: Joi.array().items(Joi.string()).optional(),
+    address: updateAddressValidationSchema.optional(),
+});
+
+export const UserValidations = {
+    createUserValidationSchema,
+    createOrdersValidationSchema,
+    updateUserValidationSchema,
+};
