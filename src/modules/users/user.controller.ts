@@ -138,10 +138,63 @@ const deleteAUserByUserId = async (req: Request, res: Response) => {
     }
 };
 
+const addAOrderByUserId = async (req: Request, res: Response) => {
+    try {
+        const { userId } = req.params;
+        const OrderData = req.body;
+
+        await UserServices.addAOrderByUserIdIntoDB(Number(userId), OrderData);
+
+        res.status(200).json({
+            success: true,
+            message: "Order created successfully!",
+            data: null,
+        });
+    } catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: error.message || "Order creation process is failed!",
+            error: {
+                code: 500,
+                description:
+                    error.message || "Order creation process is failed!",
+            },
+        });
+    }
+};
+
+const getAllOrdersByUserId = async (req: Request, res: Response) => {
+    try {
+        const { userId } = req.params;
+
+        const result = await UserServices.getAllOrdersByUserIdFromDB(
+            Number(userId),
+        );
+
+        res.status(200).json({
+            success: true,
+            message: "Order fetched successfully!",
+            data: result,
+        });
+    } catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: error.message || "Order fetched process is failed!",
+            error: {
+                code: 500,
+                description:
+                    error.message || "Order fetched process is failed!",
+            },
+        });
+    }
+};
+
 export const UserControllers = {
     createUser,
     getAllUsers,
     getAUserByUserId,
     updateAUserByUserId,
     deleteAUserByUserId,
+    addAOrderByUserId,
+    getAllOrdersByUserId,
 };

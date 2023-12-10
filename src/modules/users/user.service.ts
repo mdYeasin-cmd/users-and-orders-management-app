@@ -1,4 +1,4 @@
-import { TUser } from "./user.interface";
+import { TOrders, TUser } from "./user.interface";
 import { User } from "./user.model";
 
 const createUserIntoDB = async (userData: TUser) => {
@@ -54,10 +54,38 @@ const deleteAUserByUserIdFromDB = async (userId: number) => {
     }
 };
 
+const addAOrderByUserIdIntoDB = async (userId: number, orderData: TOrders) => {
+    if (await User.isUserExists(userId)) {
+        const result = await User.updateOne(
+            { userId },
+            { $push: { orders: orderData } },
+        );
+
+        return result;
+    } else {
+        throw new Error("Couldn't get any user using the user id!");
+    }
+};
+
+const getAllOrdersByUserIdFromDB = async (userId: number) => {
+    if (await User.isUserExists(userId)) {
+        const result = await User.findOne({ userId }).select({
+            orders: 1,
+            _id: 0,
+        });
+
+        return result;
+    } else {
+        throw new Error("Couldn't get any user using the user id!");
+    }
+};
+
 export const UserServices = {
     createUserIntoDB,
     getAllUsersFromDB,
     getAUserByUserIdFromDB,
     updateAUserByUserIdIntoDB,
     deleteAUserByUserIdFromDB,
+    addAOrderByUserIdIntoDB,
+    getAllOrdersByUserIdFromDB,
 };
