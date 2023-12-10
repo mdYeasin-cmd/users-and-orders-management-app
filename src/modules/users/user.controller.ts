@@ -189,6 +189,32 @@ const getAllOrdersByUserId = async (req: Request, res: Response) => {
     }
 };
 
+const calculateTotalPriceByUserId = async (req: Request, res: Response) => {
+    try {
+        const { userId } = req.params;
+
+        const result = await UserServices.calculateTotalPriceByUserIdFromDB(
+            Number(userId),
+        );
+
+        res.status(200).json({
+            success: true,
+            message: "Total price calculated successfully!",
+            data: result,
+        });
+    } catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: error.message || "Order calculation process is failed!",
+            error: {
+                code: 500,
+                description:
+                    error.message || "Order calculation process is failed!",
+            },
+        });
+    }
+};
+
 export const UserControllers = {
     createUser,
     getAllUsers,
@@ -197,4 +223,5 @@ export const UserControllers = {
     deleteAUserByUserId,
     addAOrderByUserId,
     getAllOrdersByUserId,
+    calculateTotalPriceByUserId,
 };

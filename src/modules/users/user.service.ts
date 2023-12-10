@@ -80,6 +80,25 @@ const getAllOrdersByUserIdFromDB = async (userId: number) => {
     }
 };
 
+const calculateTotalPriceByUserIdFromDB = async (userId: number) => {
+    if (await User.isUserExists(userId)) {
+        let totalPrice = 0;
+        const user = await User.findOne({ userId });
+        const orderList = user?.orders;
+
+        if (orderList && orderList?.length > 0) {
+            orderList?.forEach((singleOrder: TOrders) => {
+                const productPrice = singleOrder.price * singleOrder.quantity;
+                totalPrice = totalPrice + productPrice;
+            });
+        }
+
+        return { totalPrice: totalPrice };
+    } else {
+        throw new Error("Couldn't get any user using the user id!");
+    }
+};
+
 export const UserServices = {
     createUserIntoDB,
     getAllUsersFromDB,
@@ -88,4 +107,5 @@ export const UserServices = {
     deleteAUserByUserIdFromDB,
     addAOrderByUserIdIntoDB,
     getAllOrdersByUserIdFromDB,
+    calculateTotalPriceByUserIdFromDB,
 };

@@ -10,5 +10,9 @@ router.put("/:userId", UserControllers.updateAUserByUserId);
 router.delete("/:userId", UserControllers.deleteAUserByUserId);
 router.put("/:userId/orders", UserControllers.addAOrderByUserId);
 router.get("/:userId/orders", UserControllers.getAllOrdersByUserId);
+router.get(
+    "/:userId/orders/total-price",
+    UserControllers.calculateTotalPriceByUserId,
+);
 
 export const UserRoutes = router;
